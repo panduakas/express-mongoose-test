@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "paths": {
+      "Action/*": ["src/action/*"],
+      "Bridge/*": ["src/bridge/*"],
+      "Db/*": ["src/db/*"],
+      "Helpers/*": ["src/helpers/*"],
+      "Libs/*": ["src/libs/*"],
+      "Middlewares/*": ["src/middlewares/*"],
+      "Request/*": ["src/request/*"],
+      "Routes/*": ["src/routes/*"],
+      "App/*": ["src/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
