@@ -6,7 +6,8 @@
 
     * NodeJS as server runner
     * Express as server framework
-    * Mongoose as database ORM
+    * Mongoose as database ODM
+    * Bull as a queue cache using Redis as server memory store
 
 ## Getting Started
 
@@ -15,7 +16,7 @@ Getting up and running is as easy as 1, 2, 3.
 1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
    Required version:
 
-   > "node": ">= v18.19.1"
+   > "node": ">= v20.12.1"
    >
 2. Install dependencies
 
@@ -50,9 +51,7 @@ Getting up and running is as easy as 1, 2, 3.
    >
 7. Swagger Docs
 
-   > `localhost:3001`
-   > username: `dev`
-   > password: `supersecretpassword`
+   > `localhost:9000/docs`
    >
 8. Docker
 

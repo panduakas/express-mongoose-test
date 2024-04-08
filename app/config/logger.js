@@ -5,17 +5,18 @@ const {
   existsSync,
   mkdirSync,
 } = require('fs');
+const { logDir } = require('./variables');
 
-const logDir = `${process.env.LOG_DIR}`;
+const dirname = `${logDir}`;
 
 if (!existsSync(logDir)) mkdirSync(logDir);
 
 // Daily rotate generate file log
 const transport = new winston.transports.DailyRotateFile({
   filename: '%DATE%.log',
-  dirname: logDir,
+  dirname,
   datePattern: 'YYYY-MM-DD',
-  maxSize: '20m',
+  maxSize: '100m',
 });
 
 // instantiate a new Winston Logger with the settings defined above

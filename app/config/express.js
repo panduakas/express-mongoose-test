@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
-// require('../middlewares/passport');
+require('../middlewares/passport');
 
 const requestIp = require('request-ip');
 const express = require('express');
 const enrouten = require('express-enrouten');
+const get = require('lodash/get');
 const expressValidator = require('express-validator');
 const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser = require('cookie-parser');
@@ -19,16 +20,17 @@ const passport = require('passport');
 
 const {
   reqId,
-  requestLog,
+  requestLogInfo,
   limit,
   syntaxErrorHandler,
   unauthorizedErrorHandler,
   bodyLookup,
+  notFound
 } = require('../middlewares');
+const { httpStatus, errorResponse } = require('../helpers');
+const { Opertation } = require('..//action/v1/operation');
 
 const app = express();
-
-// const port = process.env.PORT;
 
 app.use(requestIp.mw());
 app.use(
@@ -65,10 +67,20 @@ app.use(xss());
 app.use(mongoSanitize());
 app.use(limit);
 app.use(reqId);
-app.use(requestLog);
+app.use(requestLogInfo);
+Opertation.queue().catch(() => ({}));
 
 // Routing
 app.use('/', enrouten({ directory: '../routes' }));
 app.use(unauthorizedErrorHandler);
+
+// Not Found handler
+app.use('*', notFound);
+
+app.use((err, req, res) => res
+  .status(
+    get(err, 'status') || get(res, 'statusCode') || httpStatus.badRequest,
+  )
+  .json(errorResponse(res, err)));
 
 module.exports = app;
