@@ -33,6 +33,7 @@ const requestLogInfo = async (req, res, next) => {
   res.logOnResponse = true;
 
   const cloneData = clone(data);
+
   if (Object.entries(query).length === 0 && query.constructor === Object) {
     delete data.query;
   }
