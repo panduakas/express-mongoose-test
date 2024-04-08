@@ -1,58 +1,35 @@
 /* eslint-disable consistent-return */
 const get = require('lodash/get');
 const basicAuthModule = require('basic-auth');
-// const passport = require('passport');
-// const jwt = require('express-jwt');
-// const {
-//   AESDecrypt,
-// } = require('../libs');
+const jwt = require('express-jwt');
+const { AESDecrypt, AESCBCDecryptWithKey } = require('../libs/encryption');
+const userModel = require('../models/user.model');
 
-// const { ErrorUnauthorized, httpStatus, errorResponse } = require('../helpers');
+const { ErrorUnauthorized } = require('../helpers');
 
-// const secretCallback = (req, payload, done) => {
-//   const getIssuer = get(payload, 'iss');
-//   const getId = get(payload, 'jti');
-//   const decryptIssuer = AESDecrypt(getIssuer);
-//   const decryptId = AESDecrypt(getId);
+const secretCallback = (req, payload, done) => {
+  const getEmail = get(payload, 'sub');
 
-//   getOnePartnerById(get(decryptId, 'jti'))
-//     .then(async (result) => {
-//       const secret = AESDecrypt(get(result, 'key'));
-//       const getName = get(decryptIssuer, 'name');
-//       const getUsername = get(result, 'username');
-//       const getUserData = get(req, 'session.user');
-//       if (!getUserData) throw new ErrorUnauthorized('UNAUTHORIZED');
-//       if (get(secret, 'key') !== get(getUserData, 'key')) {
-//         throw new ErrorUnauthorized('UNAUTHORIZED');
-//       }
-//       if (getName !== getUsername) throw new ErrorUnauthorized('UNAUTHORIZED');
+  userModel.findOne({ emailAddress: getEmail })
+    .then(async (result) => {
+      const getKey = get(result, 'key');
+      const decryptRawKey = AESDecrypt(getKey);
+      const originalKey = get(decryptRawKey, 'key');
+      const getIssuer = get(payload, 'iss');
+      const getIat = get(payload, 'iat');
+      const decryptIssuer = AESCBCDecryptWithKey(originalKey, `${getIat}000`, getIssuer);
+      if (decryptIssuer !== getEmail) throw new ErrorUnauthorized();
 
-//       const signature = Buffer.from(`${get(secret, 'key')}`).toString('base64');
-//       done(null, signature);
-//     })
-//     .catch((err) => {
-//       done(null, err);
-//     });
-// };
+      const signature = Buffer.from(`${originalKey}`).toString('base64');
+      done(null, signature);
+    })
+    .catch((e) => {
+      done(null, e);
+    });
+};
 
-// const authJWT = () => jwt({ secret: secretCallback, algorithms: ['HS256'] });
+const authJWT = () => jwt({ secret: secretCallback, algorithms: ['HS256'] });
 
-// const authPassport = () => (req, res, next) => {
-//   passport.authenticate('jwt', { session: false }, (err, user, info) => {
-//     if (err) return res.status(get(err, 'status') || get(res, 'statusCode') ||
-//  httpStatus.unauthorized).json(errorResponse(res, err));
-//     if (!user) {
-//       const error = {};
-//       error.message = get(info, 'message');
-//       error.status = get(info, 'status');
-//       return res
-//         .status(httpStatus.unauthorized).json(errorResponse(res, error));
-//     }
-
-//     req.user = user;
-//     next();
-//   })(req, res, next);
-// };
 const basicAuth = () => async (req, res, next) => {
   try {
     const user = basicAuthModule(req);
@@ -84,7 +61,6 @@ const basicAuth = () => async (req, res, next) => {
   }
 };
 module.exports = {
-  // authJWT,
-  // authPassport,
+  authJWT,
   basicAuth,
 };

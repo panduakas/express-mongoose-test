@@ -2,7 +2,7 @@
   "main": "./app/app.js",
   "version": "1.0.0",
   "private": false,
-  "description": "Nodejs using express mongoose",
+  "description": "ms_pandu_akas_betest",
   "scripts": {
     "start": "node ./app/app.js --env=development",
     "start-pm2": "./node_modules/.bin/pm2 start ./app/app.js --name be-topup --env=development",
@@ -87,7 +87,9 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
+    "bull": "^4.12.2",
     "chai": "^4.2.0",
+    "chai-http": "^4.4.0",
     "eslint": "^5.14.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-airbnb-base": "^13.1.0",
@@ -101,6 +103,8 @@
     "npm-run-all": "^4.1.5",
     "pre-commit": "^1.2.2",
     "prettier": "^1.14.3",
+    "sinon": "^17.0.1",
+    "sinon-chai": "^3.7.0",
     "stylelint": "^9.10.1",
     "supertest": "^3.4.2"
   }

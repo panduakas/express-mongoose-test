@@ -1,6 +1,6 @@
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const { basicAuth } = require('../../middlewares');
+// const { basicAuth } = require('../../middlewares');
 
 module.exports = (router) => {
   const docTitle = process.env.SWAGGER_TITLE;
@@ -13,7 +13,7 @@ module.exports = (router) => {
         version: docVersion,
       },
     },
-    apis: ['./app/routes/*.js'],
+    apis: ['./app/routes/*.js', './app/routes/v1/*.js'],
   });
 
   const showExplorer = false;
@@ -24,7 +24,7 @@ module.exports = (router) => {
 
   router.use(
     '/',
-    basicAuth(),
+    // basicAuth(),
     swaggerUi.serve,
     swaggerUi.setup(
       swaggerSpec,
